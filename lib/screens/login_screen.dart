@@ -165,12 +165,95 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         } else {
           if (mounted) {
-            NotificationService.showNotification(
-              context,
-              message: response.error?.message ?? 'Login failed',
-              isSuccess: false,
+            String errorMessage = 'Login failed';
+            
+            // Handle specific error cases
+            if (response.error != null) {
+              switch (response.error!.code) {
+                case 101: // Invalid username/password
+                  errorMessage = 'Invalid email or password';
+                  break;
+                case 205: // Email not verified
+                  errorMessage = 'Please verify your email first';
+                  break;
+                case -1: // Network error
+                  errorMessage = 'Network error. Please check your connection';
+                  break;
+                default:
+                  errorMessage = response.error!.message ?? 'Login failed';
+              }
+            }
+
+            // Show error in SnackBar
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        errorMessage,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+                backgroundColor: Colors.red.shade700,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                duration: const Duration(seconds: 4),
+                action: SnackBarAction(
+                  label: 'Dismiss',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
+                ),
+              ),
             );
+
+            // Clear password field on error
+            _passwordController.clear();
           }
+        }
+      } catch (e) {
+        if (mounted) {
+          // Handle unexpected errors
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'An unexpected error occurred: ${e.toString()}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.red.shade700,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: 'Dismiss',
+                textColor: Colors.white,
+                onPressed: () {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+              ),
+            ),
+          );
+          
+          // Clear password field on error
+          _passwordController.clear();
         }
       } finally {
         if (mounted) {
@@ -187,4 +270,5 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 }
+
 

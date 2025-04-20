@@ -339,3 +339,228 @@ flutter build apk --release
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details
+
+## Technical Architecture
+
+### Data Flow Diagram
+
+```mermaid
+graph TD
+    A[User Interface] --> B[Authentication Layer]
+    B --> C[Service Layer]
+    C --> D[Back4App Backend]
+    
+    subgraph "UI Layer"
+    A --> A1[Login/Signup Screens]
+    A --> A2[Employee Management]
+    A --> A3[Notification UI]
+    end
+    
+    subgraph "Auth Layer"
+    B --> B1[Session Management]
+    B --> B2[Token Handling]
+    B --> B3[Password Encryption]
+    end
+    
+    subgraph "Service Layer"
+    C --> C1[AuthService]
+    C --> C2[EmployeeService]
+    C --> C3[NotificationService]
+    end
+    
+    subgraph "Data Layer"
+    D --> D1[Parse Server]
+    D --> D2[User Data]
+    D --> D3[Employee Data]
+    end
+```
+
+### Security Implementation
+
+1. Password Security
+```dart
+// In HRUser model
+String getHashedPassword(String password) {
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
+}
+```
+- Passwords are hashed using SHA-256 before transmission
+- Original passwords never stored or transmitted in plain text
+- Salt-based hashing for additional security
+
+2. Session Management
+```dart
+// In AuthService
+Future<bool> isLoggedIn() async {
+    final user = await ParseUser.currentUser();
+    if (user != null) {
+        // Validate session token
+        final response = await ParseUser.getCurrentUserFromServer(user.sessionToken);
+        return response?.success ?? false;
+    }
+    return false;
+}
+```
+- Session tokens automatically managed by Parse SDK
+- Token validation on each request
+- Auto-logout on session expiration
+- Secure token storage using platform-specific secure storage
+
+3. API Security
+```dart
+// In main.dart
+await Parse().initialize(
+    Back4AppConfig.applicationId,
+    Back4AppConfig.serverUrl,
+    clientKey: Back4AppConfig.clientKey,
+    debug: true,
+);
+```
+- API requests authenticated using application ID and client key
+- HTTPS-only communication
+- Rate limiting implemented on server side
+- Request signing for data integrity
+
+### Authentication Flow
+
+1. Login Process
+```mermaid
+sequenceDiagram
+    Client->>AuthService: Login Request
+    AuthService->>Back4App: Authenticate
+    Back4App->>AuthService: Session Token
+    AuthService->>Client: Auth Response
+    Client->>LocalStorage: Store Session
+```
+
+2. Session Validation
+```mermaid
+sequenceDiagram
+    Client->>AuthService: API Request
+    AuthService->>Back4App: Validate Token
+    alt Valid Session
+        Back4App->>Client: Response
+    else Invalid Session
+        Back4App->>Client: Error
+        Client->>LoginScreen: Redirect
+    end
+```
+
+### Module Integration
+
+1. Employee Management
+```dart
+class EmployeeService {
+    // CRUD Operations with Security
+    Future<List<Employee>> getEmployees() async {
+        final query = QueryBuilder(Employee)
+            ..whereEqualTo('createdBy', 
+                await ParseUser.currentUser());
+        return query.find();
+    }
+}
+```
+- Data scoping based on user context
+- Automatic session handling
+- Error handling with user feedback
+
+2. Notification System
+```dart
+class NotificationService {
+    static Future<void> _saveNotifications() async {
+        // Secure storage with encryption
+        final prefs = await SharedPreferences.getInstance();
+        final encoded = json.encode(_notifications
+            .map((n) => n.toJson()).toList());
+        await prefs.setString(_storageKey, encoded);
+    }
+}
+```
+- Persistent storage with encryption
+- Real-time updates
+- Automatic cleanup of old notifications
+
+### Error Handling
+
+1. Network Errors
+```dart
+try {
+    await apiCall();
+} catch (e) {
+    if (e is ParseError) {
+        handleParseError(e);
+    } else if (e is NetworkError) {
+        handleNetworkError(e);
+    }
+}
+```
+
+2. Session Errors
+```dart
+if (error.code == ParseError.invalidSessionToken) {
+    await _authService.logout();
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
+}
+```
+
+### Data Persistence
+
+1. Local Storage
+- SharedPreferences for notifications
+- Secure storage for auth tokens
+- Cache management for offline access
+
+2. Remote Storage
+- Back4App Parse Server
+- Real-time updates
+- Data backup and recovery
+
+### Performance Optimizations
+
+1. Data Caching
+```dart
+class CacheManager {
+    static final Map<String, dynamic> _cache = {};
+    static Future<T> getCached<T>(String key, Future<T> Function() fetch) async {
+        if (_cache.containsKey(key)) {
+            return _cache[key] as T;
+        }
+        final data = await fetch();
+        _cache[key] = data;
+        return data;
+    }
+}
+```
+
+2. Batch Operations
+```dart
+Future<void> batchUpdate(List<Employee> employees) async {
+    final batch = ParseBatch();
+    employees.forEach((employee) {
+        batch.update(employee);
+    });
+    await batch.execute();
+}
+```
+
+### Testing Strategy
+
+1. Unit Tests
+- Service layer testing
+- Model validation
+- Authentication flow
+
+2. Integration Tests
+- API integration
+- Data persistence
+- Error handling
+
+3. UI Tests
+- Widget testing
+- Navigation flow
+- User interaction

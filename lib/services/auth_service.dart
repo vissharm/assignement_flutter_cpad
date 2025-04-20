@@ -18,12 +18,18 @@ class AuthService {
       final response = await user.login();
       
       if (!response.success) {
-        throw Exception(response.error?.message ?? 'Login failed');
+        print('Login failed: ${response.error?.message} (Code: ${response.error?.code})');
       }
       
       return response;
     } catch (e) {
-      throw Exception('Login failed: $e');
+      print('Login exception: $e');
+      final response = ParseResponse();
+      response.error = ParseError(
+        code: -1,
+        message: 'Login failed: ${e.toString()}',
+      );
+      return response;
     }
   }
 
@@ -54,5 +60,7 @@ class AuthService {
     }
   }
 }
+
+
 
 
