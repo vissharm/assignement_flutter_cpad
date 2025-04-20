@@ -33,13 +33,17 @@ class AuthService {
     }
   }
 
-  Future<void> logout() async {
+  Future<bool> logout() async {
     try {
       final user = await ParseUser.currentUser();
       if (user != null) {
         await user.logout();
+        print('User logged out successfully');
+        return true;
       }
+      return false;
     } catch (e) {
+      print('Logout failed: $e');
       throw Exception('Logout failed: $e');
     }
   }
@@ -60,6 +64,7 @@ class AuthService {
     }
   }
 }
+
 
 
 
