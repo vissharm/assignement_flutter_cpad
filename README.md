@@ -581,15 +581,179 @@ Future<void> batchUpdate(List<Employee> employees) async {
 ![image](https://github.com/user-attachments/assets/bb0a36f1-6978-47db-a48a-dbf16ff48d40)
 ![image](https://github.com/user-attachments/assets/65b5cdce-4dd2-416c-8aee-f6de51f64692)
 
+## Session Management
 
+### Overview
+The application implements a robust session management system using Back4App's Parse Server infrastructure. Sessions are securely stored and managed in the `_Session` class of Back4App database.
 
+### Session Architecture
 
+1. Session Storage
+```dart
+// Sessions are automatically stored in Back4App's _Session class with:
+{
+  "sessionToken": "unique_session_identifier",
+  "user": Pointer<_User>,
+  "createdWith": {
+    "method": "password",
+    "platform": "ios/android"
+  },
+  "expiresAt": "timestamp",
+  "installationId": "device_identifier",
+  "restricted": false
+}
+```
 
+2. Session Validation
+```dart
+Future<bool> isLoggedIn() async {
+  try {
+    final user = await ParseUser.currentUser();
+    if (user != null) {
+      final response = await ParseUser.getCurrentUserFromServer(user.sessionToken);
+      if (response != null) {
+        return response.success;
+      }
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+```
 
+3. Session Expiration Handling
+```dart
+// Automatic session expiration detection and handling
+if (error.code == ParseError.invalidSessionToken) {
+  await _authService.logout();
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (_) => LoginScreen()),
+  );
+}
+```
 
+### Key Features
 
+1. **Automatic Session Management**
+   - Session creation on login
+   - Secure session token storage
+   - Automatic token validation
+   - Session cleanup on logout
 
+2. **Security Measures**
+   - Server-side session validation
+   - Encrypted session tokens
+   - Automatic session expiration
+   - Protection against token theft
 
+3. **Error Handling**
+   - Graceful session expiration handling
+   - Automatic logout on invalid sessions
+   - User-friendly error messages
+   - Seamless login redirection
 
+### Session Lifecycle
 
+1. **Session Creation**
+   - Triggered on successful login
+   - Unique session token generated
+   - Session record created in Back4App
+   - Token returned to client
 
+2. **Session Validation**
+   - Automatic validation before API calls
+   - Server-side token verification
+   - Session expiration check
+   - User authentication confirmation
+
+3. **Session Termination**
+   - Manual logout
+   - Session expiration
+   - Invalid token detection
+   - Multiple device management
+
+### Implementation Details
+
+1. **Authentication Service**
+```dart
+class AuthService {
+  // Login with session creation
+  Future<ParseResponse> login(String email, String password) async {
+    final user = ParseUser(email, password, email);
+    return await user.login();
+  }
+
+  // Session validation
+  Future<bool> isLoggedIn() async {
+    final user = await ParseUser.currentUser();
+    if (user != null) {
+      final response = await ParseUser.getCurrentUserFromServer(user.sessionToken);
+      return response?.success ?? false;
+    }
+    return false;
+  }
+
+  // Session termination
+  Future<bool> logout() async {
+    final user = await ParseUser.currentUser();
+    if (user != null) {
+      await user.logout();
+      return true;
+    }
+    return false;
+  }
+}
+```
+
+2. **Error Handling**
+```dart
+try {
+  // API call with session token
+  await apiCall();
+} catch (e) {
+  if (e.toString().contains('Invalid session token')) {
+    await _authService.logout();
+    // Redirect to login
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
+  }
+}
+```
+
+### Back4App Dashboard Management
+
+1. **Session Monitoring**
+   - Access Back4App dashboard
+   - Navigate to Browser section
+   - Select `_Session` class
+   - View active sessions
+
+2. **Session Maintenance**
+   - Monitor session duration
+   - Track user sessions
+   - Manage concurrent sessions
+   - Force session termination
+
+### Security Best Practices
+
+1. **Token Management**
+   - Secure token storage
+   - Regular token rotation
+   - Encrypted transmission
+   - Token validation checks
+
+2. **Session Protection**
+   - Rate limiting
+   - Session timeout
+   - IP validation
+   - Device tracking
+
+3. **User Experience**
+   - Seamless session handling
+   - Clear error messages
+   - Automatic login redirection
+   - Session status indicators
