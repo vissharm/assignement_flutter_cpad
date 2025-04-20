@@ -564,3 +564,32 @@ Future<void> batchUpdate(List<Employee> employees) async {
 - Widget testing
 - Navigation flow
 - User interaction
+
+# Screenshots
+
+![image](https://github.com/user-attachments/assets/3b00a2fa-4860-472a-9c88-33aba59d62b7)
+![image](https://github.com/user-attachments/assets/b2de62b3-9d83-4d8f-86df-70369e7d588c)
+![image](https://github.com/user-attachments/assets/9d46149b-be92-4c0c-a11d-15e28a5f396c)
+![image](https://github.com/user-attachments/assets/bbff368e-db02-44be-ad75-12f0a2c740b0)
+![image](https://github.com/user-attachments/assets/952c0673-e548-439c-8a69-26e5c2861fcd)
+![image](https://github.com/user-attachments/assets/02830391-9f96-440d-851d-a1eb497198ab)
+![image](https://github.com/user-attachments/assets/1e0cf1bd-6714-41bf-b2ab-4073bf1b66c2)
+![image](https://github.com/user-attachments/assets/87497a8c-9682-4f82-9d95-cc173db57182)
+![image](https://github.com/user-attachments/assets/dfc3189d-bd41-4a50-b50a-4e3ce3460188)
+![image](https://github.com/user-attachments/assets/38a9456b-61ee-4b5f-82e4-e9e469a0f6fb)
+![image](https://github.com/user-attachments/assets/6ec08e80-b2b9-49ce-bdfb-b50ef830210a)
+![image](https://github.com/user-attachments/assets/bb0a36f1-6978-47db-a48a-dbf16ff48d40)
+![image](https://github.com/user-attachments/assets/65b5cdce-4dd2-416c-8aee-f6de51f64692)
+
+
+
+
+
+
+
+
+
+
+
+
+
