@@ -72,20 +72,159 @@ class Back4AppConfig {
 
 ## Project Structure
 
-### Models
-1. `Employee`: Employee data model
-2. `NotificationItem`: Notification data model with message, status, and timestamp
+### Directory Organization
 
-### Services
-1. `AuthService`: Handles user authentication
-2. `EmployeeService`: Manages employee CRUD operations
-3. `NotificationService`: Manages notifications with persistence
+```
+lib/
+├── config/
+│   ├── back4app_config.dart    # Back4App credentials and configuration
+│   └── app_config.dart         # Application-wide configuration
+├── models/
+│   ├── employee.dart           # Employee data model
+│   └── notification_item.dart  # Notification data model
+├── services/
+│   ├── auth_service.dart       # Authentication handling
+│   ├── employee_service.dart   # Employee CRUD operations
+│   └── notification_service.dart # Notification management
+├── screens/
+│   ├── auth/
+│   │   ├── login_screen.dart   # Login screen
+│   │   └── signup_screen.dart  # Signup screen
+│   ├── employee/
+│   │   ├── employee_list_screen.dart  # Employee listing
+│   │   └── employee_form_screen.dart  # Add/Edit employee
+│   └── notification/
+│       └── notification_history_screen.dart # Notification history
+├── widgets/
+│   ├── common/
+│   │   ├── loading_indicator.dart
+│   │   └── error_dialog.dart
+│   ├── employee/
+│   │   ├── employee_card.dart
+│   │   └── employee_list_item.dart
+│   └── notification/
+│       ├── notification_badge.dart
+│       └── notification_item_widget.dart
+└── main.dart                   # Application entry point
+```
 
-### Screens
-1. `LoginScreen`: User authentication
-2. `EmployeeListScreen`: Main employee management screen
-3. `EmployeeFormScreen`: Add/Edit employee form
-4. `NotificationHistoryScreen`: Displays notification history
+### Data Models
+
+1. Employee Model
+```dart
+class Employee {
+  final String id;
+  final String name;
+  final String email;
+  final String position;
+  final double salary;
+  
+  // Constructor and methods
+}
+```
+
+2. Notification Model
+```dart
+class NotificationItem {
+  final String message;
+  final NotificationType type;
+  final DateTime timestamp;
+  final bool isRead;
+  
+  // Constructor and methods
+}
+```
+
+### Service Layer
+
+1. Authentication Service
+```dart
+class AuthService {
+  Future<User> login(String username, String password);
+  Future<User> signup(String username, String password, String email);
+  Future<void> logout();
+  bool isAuthenticated();
+}
+```
+
+2. Employee Service
+```dart
+class EmployeeService {
+  Future<List<Employee>> getEmployees();
+  Future<Employee> getEmployee(String id);
+  Future<Employee> createEmployee(Employee employee);
+  Future<Employee> updateEmployee(Employee employee);
+  Future<void> deleteEmployee(String id);
+}
+```
+
+3. Notification Service
+```dart
+class NotificationService {
+  Future<void> addNotification(NotificationItem notification);
+  Future<List<NotificationItem>> getNotifications();
+  Future<void> markAsRead(String notificationId);
+  Future<void> clearOldNotifications();
+}
+```
+
+### Back4App Schema
+
+1. Employee Class
+```json
+{
+  "name": "Employee",
+  "fields": {
+    "name": "String",
+    "email": "String",
+    "position": "String",
+    "salary": "Number",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "createdBy": "Pointer<_User>"
+  }
+}
+```
+
+2. User Class (Default Parse Class)
+```json
+{
+  "name": "_User",
+  "fields": {
+    "username": "String",
+    "password": "String",
+    "email": "String",
+    "emailVerified": "Boolean",
+    "authData": "Object"
+  }
+}
+```
+
+### State Management
+
+The application uses a combination of:
+- Provider for app-wide state management
+- Local state for screen-specific state
+- SharedPreferences for persistent notification storage
+
+### Asset Organization
+
+```
+assets/
+├── images/
+│   ├── logo.png
+│   └── icons/
+└── fonts/
+    └── custom_icons.ttf
+```
+
+### Configuration Files
+
+Key configuration files:
+- `pubspec.yaml`: Dependencies and assets
+- `lib/config/back4app_config.dart`: Backend configuration
+- `android/app/build.gradle`: Android build configuration
+- `ios/Runner.xcodeproj`: iOS build configuration
 
 ## Implementation Details
 
