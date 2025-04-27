@@ -2,7 +2,7 @@
 
 A Flutter application demonstrating CRUD operations using Back4App as the backend.
 
-# Slides pdf document
+# Assignment document
 https://github.com/vissharm/assignement_flutter_cpad/blob/master/CrossPlatformAssignmentFinal.pdf
 
 ## Features
