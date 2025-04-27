@@ -23,7 +23,7 @@ A Flutter application demonstrating CRUD operations using Back4App as the backen
    - Local storage using `SharedPreferences`
   
 ## Screenshots
-
+![image](https://github.com/user-attachments/assets/067e04ae-100b-4e7a-858a-d4e3d213b7aa)
 ![image](https://github.com/user-attachments/assets/14bfa409-e8b2-4766-a85a-d00601637b0b)
 ![image](https://github.com/user-attachments/assets/651a6336-84bd-4dca-85ad-f7a721e6f238)
 ![image](https://github.com/user-attachments/assets/0daffa0a-f860-4af7-9f0c-a4e6eae36ef0)
