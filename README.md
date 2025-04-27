@@ -185,10 +185,7 @@ graph TD
     A[UI Layer] -->|User Actions| B[AuthService]
     A -->|CRUD Operations| C[EmployeeService]
     A -->|Notifications| D[NotificationService]
-    B -->|Session Tokens| E[Back4App]
-    C -->|Employee Data| E
-    D -->|Notification Data| E
-
+    
     subgraph "UI Layer"
     A1[Login/Signup Screens]
     A2[Employee List Screen]
@@ -199,11 +196,32 @@ graph TD
     B[AuthService]
     C[EmployeeService]
     D[NotificationService]
+    
+    %% Session Validation Flow
+    C -->|Validate Session| B
+    D -->|Validate Session| B
+    B -->|Session Status| C
+    B -->|Session Status| D
     end
 
     subgraph "Backend"
     E[Back4App]
+    F[User Management]
+    G[Employee Data]
+    H[ACL Management]
+    
+    E --> F
+    E --> G
+    E --> H
     end
+
+    B -->|Session Tokens| E
+    C -->|Employee Data + ACL| E
+    D -->|Local Storage| I[SharedPreferences]
+
+    %% Error Flows
+    E -->|Invalid Session| B
+    B -->|Auto Logout| A
 ```
 
 ---
