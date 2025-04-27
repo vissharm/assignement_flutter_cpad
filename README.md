@@ -215,14 +215,6 @@ graph TD
 
 ---
 
-## Known Issues
-
-1. **Confirmation dialogs for delete operations**: Not implemented.
-2. **State management**: The `README.md` mentions `Provider`, but it is not used in the codebase. State is managed locally within widgets.
-3. **Testing**: No tests (unit, widget, or integration) are present in the codebase.
-
----
-
 ## Contributing
 
 1. Fork the repository.
