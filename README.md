@@ -6,6 +6,8 @@ A Flutter application demonstrating CRUD operations using Back4App as the backen
 [https://github.com/vissharm/assignement_flutter_cpad/blob/master/CrossPlatformAssignmentFinal.pdf](https://github.com/vissharm/assignement_flutter_cpad/blob/master/CrossPlatformAssignmentFinal.pdf)
 ### Note:  Do click "more pages" again and again at the bottom of page to see all pages of slide document.
 
+# FOR COURSE STUDENTS: CAUTION: REPO IS MADE PUBLIC FOR EVALUATION, SO DO NOT COPY, ALREADY SUBMITTED AND SENT TO PROFESSOR. FEEL FREE TO LEARN FROM IT AND APPLY CONCEPTS. ALWAYS APPRECIATE KNOWLEDGE SHARING.
+
 # Demo recording
 https://youtu.be/RZABm8SFpk4
 
